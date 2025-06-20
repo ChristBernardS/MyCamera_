@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "231057311467",
+    "project_id": "mycamera-5a216",
+    "storage_bucket": "mycamera-5a216.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:231057311467:android:900a55b655492a4a41a0ae",
+        "android_client_info": {
+          "package_name": "com.example.mycamera"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "231057311467-coucjlj14eot7is3m8tjo5hjbovknp0r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQqix06YXgDqvfi5kuJbehtSZeme1tqWs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "231057311467-coucjlj14eot7is3m8tjo5hjbovknp0r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
