@@ -1,16 +1,15 @@
-// ProfilePage.kt
 package com.example.mycamera.ui.screens
 
-import android.util.Log // Impor Log
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items // Impor items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete // Impor Delete
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
@@ -27,11 +26,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.mycamera.R
-import com.example.mycamera.data.FeedItem // Pastikan ini diimpor jika Anda menggunakannya
-import com.example.mycamera.data.User // Impor User
+import com.example.mycamera.data.FeedItem
+import com.example.mycamera.data.User
 import com.example.mycamera.ui.components.BottomNavigationBar
-import com.example.mycamera.ui.components.NavigationDrawer // Ganti NavigationDrawer dengan HomeDrawer
-import com.example.mycamera.ui.components.TopAppBar // Ganti TopAppBar dengan HomeTopAppBar
+import com.example.mycamera.ui.components.NavigationDrawer
+import com.example.mycamera.ui.components.TopAppBar
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -40,8 +39,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.launch // Impor launch
-import kotlinx.coroutines.tasks.await // Impor await
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,8 +50,8 @@ fun ProfilePage(navController: NavController) {
     val scope = rememberCoroutineScope()
 
     val auth: FirebaseAuth = Firebase.auth
-    val db: FirebaseFirestore = Firebase.firestore // Inisialisasi Firestore
-    val currentUserId = auth.currentUser?.uid // Dapatkan ID pengguna saat ini
+    val db: FirebaseFirestore = Firebase.firestore
+    val currentUserId = auth.currentUser?.uid
 
     var userProfile by remember { mutableStateOf<User?>(null) }
     var isLoading by remember { mutableStateOf(true) }
@@ -66,7 +65,6 @@ fun ProfilePage(navController: NavController) {
     }
     val googleSignInClient = remember { GoogleSignIn.getClient(context, gso) }
 
-    // Fungsi untuk mengambil data profil pengguna dari Firestore
     suspend fun fetchUserProfile() {
         if (currentUserId == null) {
             userProfile = null
@@ -81,7 +79,6 @@ fun ProfilePage(navController: NavController) {
                 val fetchedUsername = userDoc.getString("username") ?: "Unknown User"
                 val fetchedEmail = userDoc.getString("email") ?: ""
                 val fetchedProfilePicUrl = userDoc.getString("profilePictureUrl") ?: ""
-                // Mengambil followers dan following sebagai List<String>
                 val fetchedFollowers = userDoc.get("followers") as? List<String> ?: emptyList()
                 val fetchedFollowing = userDoc.get("following") as? List<String> ?: emptyList()
 
@@ -89,8 +86,8 @@ fun ProfilePage(navController: NavController) {
                     id = userDoc.id,
                     username = fetchedUsername,
                     profilePictureUrl = fetchedProfilePicUrl.ifEmpty { "https://placehold.co/80x80/87CEEB/FFFFFF?text=${fetchedUsername.firstOrNull()?.toUpperCase() ?: '?'}" },
-                    followers = fetchedFollowers, // Meneruskan data followers
-                    following = fetchedFollowing  // Meneruskan data following
+                    followers = fetchedFollowers,
+                    following = fetchedFollowing
                 )
                 Log.d("ProfilePage", "Fetched user profile: ${userProfile?.username}, Following: ${userProfile?.following?.size}, Followers: ${userProfile?.followers?.size}")
             } else {
@@ -108,13 +105,12 @@ fun ProfilePage(navController: NavController) {
     }
 
 
-    LaunchedEffect(currentUserId) { // Memuat profil saat userId berubah atau pertama kali muncul
+    LaunchedEffect(currentUserId) {
         fetchUserProfile()
     }
 
-    // Dummy data untuk postingan pengguna (bisa Anda ganti dengan data asli dari Firestore nanti)
     val userPosts = remember { mutableStateListOf<FeedItem>() }
-    LaunchedEffect(Unit) { // Isi dummy posts
+    LaunchedEffect(Unit) {
         userPosts.addAll(
             listOf(
                 FeedItem(
@@ -155,21 +151,21 @@ fun ProfilePage(navController: NavController) {
     }
 
 
-    NavigationDrawer( // Mengganti NavigationDrawer dengan HomeDrawer
+    NavigationDrawer(
         drawerState = drawerState,
         scope = scope,
         navController = navController,
         auth = auth,
         googleSignInClient = googleSignInClient,
-        userProfile = userProfile // <-- Meneruskan userProfile ke HomeDrawer
+        userProfile = userProfile
     ) {
         Scaffold(
             topBar = {
-                TopAppBar( // Menggunakan komponen terpisah untuk TopAppBar
+                TopAppBar(
                     drawerState = drawerState,
                     scope = scope,
                     navController = navController,
-                    titleString = "Profile" // Judul untuk halaman ini
+                    titleString = "Profile"
                 )
             },
             bottomBar = {
@@ -195,7 +191,6 @@ fun ProfilePage(navController: NavController) {
                 } else if (userProfile != null) {
                     ProfileContent(user = userProfile!!, posts = userPosts)
                 } else {
-                    // Kasus jika userProfile null setelah loading selesai (misal, user tidak login)
                     Text(
                         text = "No profile data available. Please log in.",
                         modifier = Modifier.align(Alignment.Center).padding(16.dp),
@@ -207,7 +202,6 @@ fun ProfilePage(navController: NavController) {
     }
 }
 
-// Komponen Profil Konten yang terpisah
 @Composable
 fun ProfileContent(user: User, posts: List<FeedItem>) {
     Column(
@@ -215,7 +209,6 @@ fun ProfileContent(user: User, posts: List<FeedItem>) {
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        // --- UI HEADER PROFIL YANG SUDAH DINAMIS ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -223,7 +216,6 @@ fun ProfileContent(user: User, posts: List<FeedItem>) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                // Gunakan URL dari objek User. Beri fallback jika URL kosong.
                 model = user.profilePictureUrl.ifEmpty { "https://placehold.co/80x80/87CEEB/FFFFFF?text=PIC" },
                 contentDescription = "Profile Picture",
                 modifier = Modifier
@@ -234,22 +226,17 @@ fun ProfileContent(user: User, posts: List<FeedItem>) {
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column {
-                // Gunakan username dari objek User.
                 Text(user.username, fontWeight = FontWeight.Bold, fontSize = 22.sp, color = Color(0xFF4C4C4C))
 
-                // Hitung jumlah teman dari ukuran list 'following'
                 val friendCount = user.following.size
                 val friendText = if (friendCount == 1) "$friendCount friend" else "$friendCount friends"
 
-                // Tampilkan jumlah teman yang dinamis.
                 Text(friendText, fontSize = 14.sp, color = Color.Gray)
             }
         }
-        // --- AKHIR UI HEADER PROFIL ---
 
         Divider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
 
-        // Tampilkan grid postingan pengguna.
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(4.dp)
@@ -263,10 +250,10 @@ fun ProfileContent(user: User, posts: List<FeedItem>) {
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .aspectRatio(1f) // Membuat item menjadi persegi
+                                .aspectRatio(1f)
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(Color.LightGray) // Placeholder warna abu-abu
-                                .clickable { /* TODO: Show post details/delete option */ }
+                                .background(Color.LightGray)
+                                .clickable {  }
                         ) {
                             AsyncImage(
                                 model = item.imageUrl,
@@ -274,7 +261,6 @@ fun ProfileContent(user: User, posts: List<FeedItem>) {
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
                             )
-                            // Contoh ikon hapus di sudut kanan atas
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = "Delete Post",
@@ -287,7 +273,6 @@ fun ProfileContent(user: User, posts: List<FeedItem>) {
                             )
                         }
                     }
-                    // Isi sisa kolom jika kurang dari 3 item
                     for (i in 0 until (3 - rowItems.size)) {
                         Spacer(modifier = Modifier.weight(1f))
                     }

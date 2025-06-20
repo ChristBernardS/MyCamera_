@@ -39,30 +39,28 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.example.mycamera.R
-import com.example.mycamera.data.FeedItem // Perlu diimpor, meskipun tidak digunakan secara langsung di sini
-import com.example.mycamera.data.User // Impor User data class
-import com.example.mycamera.ui.components.BottomNavigationBar // Impor BottomNavigationBar
-import com.example.mycamera.ui.components.NavigationDrawer // Impor HomeDrawer
-import com.example.mycamera.ui.components.TopAppBar // Impor HomeTopAppBar
+import com.example.mycamera.data.FeedItem
+import com.example.mycamera.data.User
+import com.example.mycamera.ui.components.BottomNavigationBar
+import com.example.mycamera.ui.components.NavigationDrawer
+import com.example.mycamera.ui.components.TopAppBar
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.firestore.FirebaseFirestore // Impor Firestore
-import com.google.firebase.firestore.ktx.firestore // Impor Firestore ktx
-import kotlinx.coroutines.Dispatchers // Impor Dispatchers
-import kotlinx.coroutines.launch // Impor launch
-import kotlinx.coroutines.withContext // Impor withContext
-import kotlinx.coroutines.tasks.await // Impor await
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-// Pindahkan deklarasi previewViewInstance ke luar fungsi Composable agar bisa diakses oleh LaunchedEffect
 private var previewViewInstance: PreviewView? = null
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,13 +69,13 @@ fun CameraPage(navController: NavController) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope() // Diperlukan untuk HomeDrawer
+    val scope = rememberCoroutineScope()
 
     val auth: FirebaseAuth = Firebase.auth
-    val db: FirebaseFirestore = Firebase.firestore // Inisialisasi Firestore
-    val currentUserId = auth.currentUser?.uid // Dapatkan ID pengguna saat ini
+    val db: FirebaseFirestore = Firebase.firestore
+    val currentUserId = auth.currentUser?.uid
 
-    var userProfile by remember { mutableStateOf<User?>(null) } // State untuk menyimpan data profil pengguna
+    var userProfile by remember { mutableStateOf<User?>(null) }
 
     val gso = remember {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -93,9 +91,8 @@ fun CameraPage(navController: NavController) {
     val cameraExecutor: ExecutorService = remember { Executors.newSingleThreadExecutor() }
     var message by remember { mutableStateOf("") }
 
-    var isCapturing by remember { mutableStateOf(false) } // State untuk menunjukkan apakah sedang mengambil gambar
+    var isCapturing by remember { mutableStateOf(false) }
 
-    // Fungsi untuk mengambil data profil pengguna dari Firestore
     suspend fun fetchUserProfile() {
         if (currentUserId == null) {
             userProfile = null
@@ -138,7 +135,7 @@ fun CameraPage(navController: NavController) {
     }
 
     LaunchedEffect(Unit) {
-        fetchUserProfile() // Panggil fetchUserProfile di sini
+        fetchUserProfile()
 
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             hasCameraPermission = true
@@ -147,9 +144,8 @@ fun CameraPage(navController: NavController) {
         }
     }
 
-    // LaunchedEffect untuk mengelola binding kamera saat izin, lensa, atau PreviewView berubah
     LaunchedEffect(hasCameraPermission, currentLensFacing, previewViewInstance) {
-        val currentPreviewView = previewViewInstance // Tangkap instance PreviewView saat ini
+        val currentPreviewView = previewViewInstance
         if (hasCameraPermission && currentPreviewView != null) {
             val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
             cameraProviderFuture.addListener({
@@ -187,7 +183,7 @@ fun CameraPage(navController: NavController) {
         }
     }
 
-    NavigationDrawer( // Mengganti NavigationDrawer dengan HomeDrawer
+    NavigationDrawer(
         drawerState = drawerState,
         scope = scope,
         navController = navController,
@@ -197,11 +193,11 @@ fun CameraPage(navController: NavController) {
     ) {
         Scaffold(
             topBar = {
-                TopAppBar( // Menggunakan komponen terpisah untuk TopAppBar
+                TopAppBar(
                     drawerState = drawerState,
                     scope = scope,
                     navController = navController,
-                    titleString = "Camera" // Judul untuk halaman ini
+                    titleString = "Camera"
                 )
             },
             bottomBar = {
@@ -209,25 +205,23 @@ fun CameraPage(navController: NavController) {
                     navController = navController
                 )
             },
-            containerColor = Color(0xFF4C4C4C) // Background color untuk Scaffold keseluruhan (di luar area kamera)
-        ) { paddingValues -> // These paddingValues account for top and bottom bars
-            Box( // Ini adalah Box utama yang akan menampung semua konten layar kamera
+            containerColor = Color(0xFF4C4C4C)
+        ) { paddingValues ->             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
-                // Camera Preview (AndroidView) - Mengisi seluruh Box ini, sehingga menembus bar
                 if (hasCameraPermission) {
                     AndroidView(
                         modifier = Modifier
-                            .fillMaxSize() // Mengisi seluruh Box, sehingga akan berada di belakang Top/Bottom Bar
-                            .clip(RoundedCornerShape(0.dp)) // Hapus sudut bulat jika ingin full screen
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(0.dp))
                             .background(Color.Black),
                         factory = { ctx ->
                             PreviewView(ctx).apply {
-                                this.scaleType = PreviewView.ScaleType.FILL_CENTER // Sesuaikan scaleType jika perlu
+                                this.scaleType = PreviewView.ScaleType.FILL_CENTER
                                 previewViewInstance = this
                             }
                         },
-                        update = { /* Logika binding di LaunchedEffect */ }
+                        update = { }
                     )
                 } else {
                     Box(
@@ -239,42 +233,22 @@ fun CameraPage(navController: NavController) {
                         Text("Camera Access Required", color = Color.White, fontSize = 20.sp)
                     }
                 }
-
-                // Kolom untuk kontrol (tombol capture, switch, dan pesan)
-                // Ini harus ditempatkan di atas preview kamera dan menghormati padding Top/Bottom Bar
                 Column(
                     modifier = Modifier
-                        .fillMaxSize() // Memenuhi Box induk
-                        .padding(paddingValues), // Menerapkan padding yang diberikan Scaffold
+                        .fillMaxSize()
+                        .padding(paddingValues),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween // Mendistribusikan ruang secara vertikal
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    // Spacer di bagian atas untuk mendorong konten ke bawah (dari TopAppBar)
-                    Spacer(modifier = Modifier.height(16.dp)) // Memberikan sedikit ruang di bawah TopAppBar
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                    // Spacer di tengah untuk mendorong tombol ke bawah
                     Spacer(modifier = Modifier.weight(1f))
 
-                    // Pesan status atau error
-//                    if (message.isNotBlank()) {
-//                        Text(
-//                            text = message,
-//                            color = Color.Yellow,
-//                            fontSize = 14.sp,
-//                            modifier = Modifier
-//                                .padding(horizontal = 16.dp, vertical = 8.dp)
-//                                .background(Color.Black.copy(alpha = 0.5f), RoundedCornerShape(4.dp))
-//                                .padding(horizontal = 8.dp, vertical = 4.dp)
-//                        )
-//                    }
-                    Spacer(modifier = Modifier.height(16.dp)) // Spasi antara pesan dan tombol
-
-
-                    // Row tombol tangkap gambar/video dan tombol putar kamera
+                    Spacer(modifier = Modifier.height(16.dp))
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 32.dp), // Padding horizontal untuk tombol
+                            .padding(horizontal = 32.dp),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -348,7 +322,7 @@ fun CameraPage(navController: NavController) {
                         }
                         Spacer(modifier = Modifier.weight(1f))
                     }
-                    Spacer(modifier = Modifier.height(32.dp)) // Padding di bagian paling bawah
+                    Spacer(modifier = Modifier.height(32.dp))
                 }
             }
         }

@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.mycamera.data.ChatMessage // Impor ChatMessage
-import com.example.mycamera.ui.components.MessageBubble // Impor MessageBubble
+import com.example.mycamera.data.ChatMessage
+import com.example.mycamera.ui.components.MessageBubble
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,7 +48,7 @@ fun ChatRoomPage(navController: NavController, chatPartnerName: String) {
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         AsyncImage(
-                            model = "https://placehold.co/40x40/3CB371/FFFFFF?text=E", // Placeholder for chat partner's profile
+                            model = "https://placehold.co/40x40/3CB371/FFFFFF?text=E",
                             contentDescription = "Profile Picture",
                             modifier = Modifier
                                 .size(40.dp)
@@ -71,7 +71,7 @@ fun ChatRoomPage(navController: NavController, chatPartnerName: String) {
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFF5F0E7))
             )
         },
-        containerColor = Color(0xFFF5F0E7) // Warna latar belakang ruang chat
+        containerColor = Color(0xFFF5F0E7)
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -83,7 +83,7 @@ fun ChatRoomPage(navController: NavController, chatPartnerName: String) {
                     .weight(1f)
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                reverseLayout = false // Pesan terbaru di bawah
+                reverseLayout = false
             ) {
                 items(messages) { message ->
                     MessageBubble(message = message)
@@ -95,7 +95,7 @@ fun ChatRoomPage(navController: NavController, chatPartnerName: String) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
-                    .background(Color(0xFF333333), RoundedCornerShape(24.dp)), // Warna gelap untuk input
+                    .background(Color(0xFF333333), RoundedCornerShape(24.dp)),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedTextField(
@@ -109,9 +109,6 @@ fun ChatRoomPage(navController: NavController, chatPartnerName: String) {
                         focusedBorderColor = Color.Transparent,
                         unfocusedBorderColor = Color.Transparent,
                         focusedTextColor = Color.White
-//                        focusedBorderColor = Color.Transparent,
-//                        unfocusedBorderColor = Color.Transparent,
-//                        textColor = Color.White
                     )
                 )
                 IconButton(

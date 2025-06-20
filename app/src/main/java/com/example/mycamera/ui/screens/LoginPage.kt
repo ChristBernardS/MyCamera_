@@ -1,4 +1,3 @@
-// LoginPage.kt
 package com.example.mycamera.ui.screens
 
 import android.content.ContentValues.TAG
@@ -17,13 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource // Impor painterResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.mycamera.R // Pastikan ini diimpor untuk mengakses drawable
+import com.example.mycamera.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -34,9 +33,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
-// Hapus impor ikon Google dari Material Icons Extended
-// import androidx.compose.material.icons.Icons
-// import androidx.compose.material.icons.filled.Google
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -252,8 +248,8 @@ fun LoginPage(navController: NavController) {
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Image( // Menggunakan Image dari drawable
-                        painter = painterResource(id = R.drawable.google), // <-- Menggunakan R.drawable.ic_google_logo
+                    Image(
+                        painter = painterResource(id = R.drawable.google),
                         contentDescription = "Google Logo",
                         modifier = Modifier.size(24.dp)
                     )

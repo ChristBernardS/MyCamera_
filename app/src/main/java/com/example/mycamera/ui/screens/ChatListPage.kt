@@ -14,16 +14,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.mycamera.data.ChatListItem // Impor ChatListItem
-import com.example.mycamera.ui.components.BottomNavigationBar // Impor BottomNavigationBar
-import com.example.mycamera.ui.components.ChatListItemCard // Impor ChatListItemCard
+import com.example.mycamera.data.ChatListItem
+import com.example.mycamera.ui.components.BottomNavigationBar
+import com.example.mycamera.ui.components.ChatListItemCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatListPage(navController: NavController) {
     val chatListItems = remember { mutableStateListOf<ChatListItem>() }
 
-    // Dummy data untuk daftar chat
+
     LaunchedEffect(Unit) {
         chatListItems.addAll(
             listOf(
@@ -32,21 +32,21 @@ fun ChatListPage(navController: NavController) {
                     username = "Rachel",
                     profilePictureUrl = "https://placehold.co/40x40/FF6347/FFFFFF?text=R",
                     lastMessage = "Udah makan belum?",
-                    lastMessageTimestamp = System.currentTimeMillis() - 3600000 // 1 jam lalu
+                    lastMessageTimestamp = System.currentTimeMillis() - 3600000
                 ),
                 ChatListItem(
                     userId = "michael",
                     username = "Michael",
                     profilePictureUrl = "https://placehold.co/40x40/4682B4/FFFFFF?text=M",
                     lastMessage = "Dimana tuh tempatnya?",
-                    lastMessageTimestamp = System.currentTimeMillis() - 7200000 // 2 jam lalu
+                    lastMessageTimestamp = System.currentTimeMillis() - 7200000
                 ),
                 ChatListItem(
                     userId = "emma",
                     username = "Emma",
                     profilePictureUrl = "https://placehold.co/40x40/3CB371/FFFFFF?text=E",
                     lastMessage = "Aku beli di demangan sih",
-                    lastMessageTimestamp = System.currentTimeMillis() - 10800000 // 3 jam lalu
+                    lastMessageTimestamp = System.currentTimeMillis() - 10800000
                 )
             )
         )

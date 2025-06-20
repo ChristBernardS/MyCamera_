@@ -11,53 +11,40 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.filled.ChatBubble
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
 import com.example.mycamera.R
 import com.example.mycamera.data.FeedItem
-import com.example.mycamera.data.Comment
-import com.example.mycamera.data.User // Impor User
+import com.example.mycamera.data.User
 import com.example.mycamera.ui.components.BottomNavigationBar
 import com.example.mycamera.ui.components.FeedCard
 import com.example.mycamera.ui.components.TopAppBar
-import com.example.mycamera.ui.components.NavigationDrawer // Import HomeDrawer
+import com.example.mycamera.ui.components.NavigationDrawer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.firestore.FirebaseFirestore // Impor Firestore
-import com.google.firebase.firestore.ktx.firestore // Impor Firestore ktx
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.tasks.await // Impor await
+import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -74,12 +61,11 @@ fun HomePage(navController: NavController) {
     var feedErrorMessage by remember { mutableStateOf<String?>(null) }
     var hasStoragePermission by remember { mutableStateOf(false) }
 
-    // Kembalikan inisialisasi Firebase Auth dan Firestore
     val auth: FirebaseAuth = Firebase.auth
     val db: FirebaseFirestore = Firebase.firestore
-    val currentUserId = auth.currentUser?.uid // Dapatkan ID pengguna saat ini
+    val currentUserId = auth.currentUser?.uid
 
-    var userProfile by remember { mutableStateOf<User?>(null) } // State to hold user profile data
+    var userProfile by remember { mutableStateOf<User?>(null) }
 
     val gso = remember {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -89,10 +75,9 @@ fun HomePage(navController: NavController) {
     }
     val googleSignInClient = remember { GoogleSignIn.getClient(context, gso) }
 
-    // Fungsi untuk mengambil data profil pengguna dari Firestore
     suspend fun fetchUserProfile() {
         if (currentUserId == null) {
-            userProfile = null // Clear profile if no user logged in
+            userProfile = null
             Log.d("HomePage", "No current user ID to fetch profile.")
             return
         }
@@ -137,7 +122,6 @@ fun HomePage(navController: NavController) {
         } else {
             feedErrorMessage = null
             Log.d("HomePage", "Storage permission granted by user.")
-//            scope.launch { fetchLocalImages(context, feedItems) }
         }
     }
 
@@ -284,8 +268,7 @@ fun HomePage(navController: NavController) {
         }
     }
 
-    // Effect untuk mengambil profil pengguna saat pertama kali masuk atau user berubah
-    LaunchedEffect(currentUserId) { // <-- Baris 249 Anda
+    LaunchedEffect(currentUserId) {
         fetchUserProfile()
     }
 
@@ -305,7 +288,7 @@ fun HomePage(navController: NavController) {
         navController = navController,
         auth = auth,
         googleSignInClient = googleSignInClient,
-        userProfile = userProfile // <-- Meneruskan userProfile ke HomeDrawer
+        userProfile = userProfile
     ) {
         Scaffold(
             topBar = {

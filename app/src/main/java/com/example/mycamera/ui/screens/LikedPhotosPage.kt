@@ -1,7 +1,7 @@
 // LikedPhotosPage.kt
 package com.example.mycamera.ui.screens
 
-import android.util.Log // Impor Log
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,34 +25,33 @@ import coil.compose.AsyncImage
 import com.example.mycamera.R
 import com.example.mycamera.data.FeedItem
 import com.example.mycamera.data.NotificationItem
-import com.example.mycamera.data.User // Impor User data class
+import com.example.mycamera.data.User
 import com.example.mycamera.ui.components.BottomNavigationBar
-import com.example.mycamera.ui.components.NavigationDrawer // Ganti NavigationDrawer dengan HomeDrawer
+import com.example.mycamera.ui.components.NavigationDrawer
 import com.example.mycamera.ui.components.NotificationCard
-import com.example.mycamera.ui.components.TopAppBar // Ganti TopAppBar dengan HomeTopAppBar
+import com.example.mycamera.ui.components.TopAppBar
 import com.example.mycamera.ui.components.NavigationDrawer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore // Impor Firestore
-import com.google.firebase.firestore.ktx.firestore // Impor Firestore ktx
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.launch // Impor launch
-import kotlinx.coroutines.tasks.await // Impor await
+import kotlinx.coroutines.tasks.await
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LikedPhotosPage(navController: NavController) {
     val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope() // Diperlukan untuk HomeDrawer
+    val scope = rememberCoroutineScope()
 
     val auth: FirebaseAuth = Firebase.auth
-    val db: FirebaseFirestore = Firebase.firestore // Inisialisasi Firestore
-    val currentUserId = auth.currentUser?.uid // Dapatkan ID pengguna saat ini
+    val db: FirebaseFirestore = Firebase.firestore
+    val currentUserId = auth.currentUser?.uid
 
-    var userProfile by remember { mutableStateOf<User?>(null) } // State untuk menyimpan data profil pengguna
+    var userProfile by remember { mutableStateOf<User?>(null) }
 
     val gso = remember {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -64,7 +63,6 @@ fun LikedPhotosPage(navController: NavController) {
 
     val likedPhotos = remember { mutableStateListOf<FeedItem>() }
 
-    // Fungsi untuk mengambil data profil pengguna dari Firestore
     suspend fun fetchUserProfile() {
         if (currentUserId == null) {
             userProfile = null
@@ -94,13 +92,8 @@ fun LikedPhotosPage(navController: NavController) {
         }
     }
 
-
-    // Dummy data untuk foto yang disukai
-    // TODO: Ganti dengan pengambilan data like dari Firestore.
-    // Anda perlu menyimpan daftar `likedPosts` (ID postingan) di dokumen pengguna Anda,
-    // lalu ambil postingan tersebut dari koleksi `posts`.
     LaunchedEffect(Unit) {
-        fetchUserProfile() // Panggil fetchUserProfile di sini
+        fetchUserProfile()
 
         likedPhotos.addAll(
             listOf(
@@ -108,11 +101,11 @@ fun LikedPhotosPage(navController: NavController) {
                     id = "liked1",
                     username = "John Smith",
                     profilePictureUrl = "https://placehold.co/40x40/87CEEB/FFFFFF?text=JS",
-                    imageUrl = "https://placehold.co/200x200/B88C4A/FFFFFF?text=Liked+Photo+1", // Ini String URL
+                    imageUrl = "https://placehold.co/200x200/B88C4A/FFFFFF?text=Liked+Photo+1",
                     location = "Bali",
                     date = "Mar 25, 2026",
                     description = "Magical island worth discovering",
-                    likesCount = 1, // Anggap sudah disukai
+                    likesCount = 1,
                     comments = emptyList(),
                     isLiked = true
                 ),
@@ -120,7 +113,7 @@ fun LikedPhotosPage(navController: NavController) {
                     id = "liked2",
                     username = "John Smith",
                     profilePictureUrl = "https://placehold.co/40x40/87CEEB/FFFFFF?text=JS",
-                    imageUrl = "https://placehold.co/200x200/8B4513/FFFFFF?text=Liked+Photo+2", // Ini String URL
+                    imageUrl = "https://placehold.co/200x200/8B4513/FFFFFF?text=Liked+Photo+2",
                     location = "Paris",
                     date = "Feb 10, 2026",
                     description = "City of love",
@@ -132,21 +125,21 @@ fun LikedPhotosPage(navController: NavController) {
         )
     }
 
-    NavigationDrawer( // Mengganti NavigationDrawer dengan HomeDrawer
+    NavigationDrawer(
         drawerState = drawerState,
         scope = scope,
         navController = navController,
-        auth = auth, // Meneruskan instance auth
+        auth = auth,
         googleSignInClient = googleSignInClient,
-        userProfile = userProfile // <-- Meneruskan userProfile ke HomeDrawer
+        userProfile = userProfile
     ) {
         Scaffold(
             topBar = {
-                TopAppBar( // Menggunakan komponen terpisah untuk TopAppBar
+                TopAppBar(
                     drawerState = drawerState,
                     scope = scope,
                     navController = navController,
-                    titleString = "Liked" // Judul untuk halaman ini
+                    titleString = "Liked"
                 )
             },
             bottomBar = {
@@ -162,8 +155,7 @@ fun LikedPhotosPage(navController: NavController) {
                     .padding(paddingValues)
                     .padding(horizontal = 8.dp, vertical = 8.dp)
             ) {
-                // Tampilan Grid untuk foto yang disukai
-                // Untuk kesederhanaan, menggunakan LazyColumn dengan grid mirip Instagram
+
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(4.dp)
@@ -177,9 +169,9 @@ fun LikedPhotosPage(navController: NavController) {
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .aspectRatio(1f) // Membuat item menjadi persegi
+                                        .aspectRatio(1f)
                                         .clip(RoundedCornerShape(8.dp))
-                                        .background(Color.LightGray) // Placeholder warna abu-abu
+                                        .background(Color.LightGray)
                                 ) {
                                     AsyncImage(
                                         model = item.imageUrl,
@@ -189,7 +181,6 @@ fun LikedPhotosPage(navController: NavController) {
                                     )
                                 }
                             }
-                            // Isi sisa kolom jika kurang dari 3 item
                             for (i in 0 until (3 - rowItems.size)) {
                                 Spacer(modifier = Modifier.weight(1f))
                             }

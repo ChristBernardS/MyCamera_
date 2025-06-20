@@ -1,14 +1,11 @@
-// NotificationPage.kt
 package com.example.mycamera.ui.screens
 
-import android.util.Log // Impor Log jika belum ada
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack // Ikon Back jika ingin kembali dari halaman notifikasi
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -19,23 +16,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mycamera.R
-import com.example.mycamera.data.FeedItem // Mungkin tidak perlu jika hanya notifikasi, tapi biarkan dulu
-import com.example.mycamera.data.NotificationItem // Impor NotificationItem
-import com.example.mycamera.data.User // Impor User data class
-import com.example.mycamera.ui.components.BottomNavigationBar // Impor BottomNavigationBar
-import com.example.mycamera.ui.components.NavigationDrawer // Ganti NavigationDrawer dengan HomeDrawer
-import com.example.mycamera.ui.components.NotificationCard // Impor NotificationCard
-import com.example.mycamera.ui.components.TopAppBar // Ganti TopAppBar dengan HomeTopAppBar
+import com.example.mycamera.data.NotificationItem
+import com.example.mycamera.data.User
+import com.example.mycamera.ui.components.BottomNavigationBar
+import com.example.mycamera.ui.components.NavigationDrawer
+import com.example.mycamera.ui.components.NotificationCard
+import com.example.mycamera.ui.components.TopAppBar
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.firestore.FirebaseFirestore // Impor Firestore
-import com.google.firebase.firestore.ktx.firestore // Impor Firestore ktx
-import kotlinx.coroutines.launch // Impor launch
-import kotlinx.coroutines.tasks.await // Impor await
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import kotlinx.coroutines.tasks.await
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,13 +38,13 @@ fun NotificationPage(navController: NavController) {
     val notifications = remember { mutableStateListOf<NotificationItem>() }
     val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope() // Diperlukan untuk HomeDrawer
+    val scope = rememberCoroutineScope()
 
     val auth: FirebaseAuth = Firebase.auth
-    val db: FirebaseFirestore = Firebase.firestore // Inisialisasi Firestore
-    val currentUserId = auth.currentUser?.uid // Dapatkan ID pengguna saat ini
+    val db: FirebaseFirestore = Firebase.firestore
+    val currentUserId = auth.currentUser?.uid
 
-    var userProfile by remember { mutableStateOf<User?>(null) } // State untuk menyimpan data profil pengguna
+    var userProfile by remember { mutableStateOf<User?>(null) }
 
     val gso = remember {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -59,7 +54,6 @@ fun NotificationPage(navController: NavController) {
     }
     val googleSignInClient = remember { GoogleSignIn.getClient(context, gso) }
 
-    // Fungsi untuk mengambil data profil pengguna dari Firestore
     suspend fun fetchUserProfile() {
         if (currentUserId == null) {
             userProfile = null
@@ -89,13 +83,10 @@ fun NotificationPage(navController: NavController) {
         }
     }
 
-    // Panggil fetchUserProfile saat composable pertama kali muncul atau currentUserId berubah
     LaunchedEffect(currentUserId) {
         fetchUserProfile()
     }
 
-
-    // Dummy data notifikasi
     LaunchedEffect(Unit) {
         notifications.addAll(
             listOf(
@@ -121,21 +112,21 @@ fun NotificationPage(navController: NavController) {
         )
     }
 
-    NavigationDrawer( // Mengganti NavigationDrawer dengan HomeDrawer
+    NavigationDrawer(
         drawerState = drawerState,
         scope = scope,
         navController = navController,
-        auth = auth, // Meneruskan instance auth
+        auth = auth,
         googleSignInClient = googleSignInClient,
-        userProfile = userProfile // <-- Meneruskan userProfile ke HomeDrawer
+        userProfile = userProfile
     ) {
         Scaffold(
             topBar = {
-                TopAppBar( // Menggunakan komponen terpisah untuk TopAppBar
+                TopAppBar(
                     drawerState = drawerState,
                     scope = scope,
                     navController = navController,
-                    titleString = "Notification" // Judul untuk halaman ini
+                    titleString = "Notification"
                 )
             },
             bottomBar = {
