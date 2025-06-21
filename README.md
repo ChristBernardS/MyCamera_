@@ -6,6 +6,6 @@ MyCamera adalah aplikasi android yang dibuat secara exclusive hanya untuk membag
 ---
 ### Team
 Projek ini dikerjakan dalam kelompok yang beranggotakan:
-- Christopher Bernard - [@ChristBernardS]((https://github.com/ChristBernardS))
+- Christopher Bernard - [@ChristBernardS](https://github.com/ChristBernardS)
 - Ricardo Yan Augusto - [@RicardoYanAugusto](https://github.com/ricardoaugusto31)
 - Fiegoldes Shindy - [@Fiegoldes Shi](https://github.com/Fiegoldes)
